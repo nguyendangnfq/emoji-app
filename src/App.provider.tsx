@@ -52,8 +52,6 @@ export const AppProvider: React.FC<ProviderProps> = props => {
     const getDataFromStorage = async () => {
       const data = await getAppData();
 
-      console.log(data);
-
       if (data) {
         setMoodList(data.moods);
       }
