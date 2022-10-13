@@ -6,6 +6,7 @@ import { MoodOptionType, MoodOptionWithTimeStamp } from './types';
 type AppContextType = {
   moodList: MoodOptionWithTimeStamp[];
   handleSelectMood: (mood: MoodOptionType) => void;
+  handleDeleteMood: (mood: MoodOptionWithTimeStamp) => void;
 };
 
 type AppData = {
@@ -14,11 +15,6 @@ type AppData = {
 
 type ProviderProps = {
   children: React.ReactNode;
-};
-
-const defaultValue = {
-  moodList: [],
-  handleSelectMood: () => {},
 };
 
 const storageKey = 'my-app-data';
@@ -43,10 +39,24 @@ const setAppData = async (newData: AppData) => {
   } catch {}
 };
 
-const AppContext = createContext<AppContextType>(defaultValue);
+const AppContext = createContext<AppContextType>({
+  moodList: [],
+  handleSelectMood: () => {},
+  handleDeleteMood: () => {},
+});
 
 export const AppProvider: React.FC<ProviderProps> = props => {
   const [moodList, setMoodList] = useState<MoodOptionWithTimeStamp[]>([]);
+
+  const handleDeleteMood = useCallback((mood: MoodOptionWithTimeStamp) => {
+    setMoodList(current => {
+      const newMoodList = current.filter(
+        value => value.timestamp !== mood.timestamp,
+      );
+      setAppData({ moods: newMoodList });
+      return newMoodList;
+    });
+  }, []);
 
   useEffect(() => {
     const getDataFromStorage = async () => {
@@ -67,7 +77,8 @@ export const AppProvider: React.FC<ProviderProps> = props => {
     });
   }, []);
   return (
-    <AppContext.Provider value={{ moodList, handleSelectMood }}>
+    <AppContext.Provider
+      value={{ moodList, handleSelectMood, handleDeleteMood }}>
       {props.children}
     </AppContext.Provider>
   );
