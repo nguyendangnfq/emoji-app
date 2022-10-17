@@ -19,7 +19,7 @@ export const Analytics: React.FC = () => {
         data={data}
         colorScale={['tomato', 'orange', 'gold', 'cyan', 'navy']}
         innerRadius={50}
-        labelRadius={({ innerRadius }) => innerRadius + 20}
+        labelRadius={({ innerRadius }: any) => innerRadius + 20}
         style={{ labels: { fontSize: 30 } }}
       />
     </View>
